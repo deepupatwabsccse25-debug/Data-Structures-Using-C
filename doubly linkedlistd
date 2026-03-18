@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+struct Node* head = NULL;
+
+// Insert at end
+void InsertEnd(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (head == NULL) {
+        newNode->prev = NULL;
+        head = newNode;
+        return;
+    }
+
+    struct Node* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+// Traverse list
+void Traverse() {
+    struct Node* temp = head;
+
+    if (temp == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+// Delete from beginning
+void DeleteBeginning() {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node* temp = head;
+    head = head->next;
+
+    if (head != NULL) {
+        head->prev = NULL;
+    }
+
+    free(temp);
+}
+
+// Delete specific value
+void DeleteValue(int value) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node* temp = head;
+
+    // Search for value
+    while (temp != NULL && temp->data != value) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Value not found\n");
+        return;
+    }
+
+    // If node is head
+    if (temp == head) {
+        head = temp->next;
+        if (head != NULL) {
+            head->prev = NULL;
+        }
+    } else {
+        if (temp->prev != NULL) {
+            temp->prev->next = temp->next;
+        }
+        if (temp->next != NULL) {
+            temp->next->prev = temp->prev;
+        }
+    }
+
+    free(temp);
+}
+
+int main() {
+    InsertEnd(10);
+    InsertEnd(20);
+    InsertEnd(30);
+
+    printf("Original List: ");
+    Traverse();
+
+    DeleteBeginning();
+    printf("After deleting beginning: ");
+    Traverse();
+
+    DeleteValue(20);
+    printf("After deleting value 20: ");
+    Traverse();
+
+    return 0;
+}
